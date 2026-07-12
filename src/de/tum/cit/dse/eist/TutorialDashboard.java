@@ -17,7 +17,7 @@ public class TutorialDashboard implements TutorialObserver{
 
     public int getAvailableSlots(String tutorialName) { 
         // TODO 1.3: Look up the requested tutorial in the dashboard state.
-        throw new RuntimeException("TutorialDashboard::getAvailableSlots: Not implemented yet");
+        return tutorialSlots.getOrDefault(tutorialName, 0);
     }
 
     public String formatDashboard() { 
@@ -28,6 +28,10 @@ public class TutorialDashboard implements TutorialObserver{
 
     @Override
     public void update(String tutorialName, int availableSlots) {
-
+        if (tutorialSlots.containsKey(tutorialName)){
+            tutorialSlots.replace(tutorialName, availableSlots);
+        }else{
+            tutorialSlots.put(tutorialName, availableSlots);
+        }
     }
 }

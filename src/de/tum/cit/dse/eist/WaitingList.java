@@ -2,33 +2,50 @@ package de.tum.cit.dse.eist;
 
 import de.tum.cit.dse.eist.data.Student;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.locks.ReentrantLock;
 
 // Hint: Do not forget the necessary imports.
 // TODO 3: Complete the class declaration according to the UML diagram.
 
-public class WaitingList {
+public class WaitingList implements TutorialObserver{
     // TODO 3: Add the fields needed to manage waiting students for each tutorial.
 
     // TODO 3: Keep the service reference needed for registration attempts.
 
     // Optional: Add a synchronization mechanism for the concurrency part.
+    private HashMap<String, List<Student>> waitingList;
+    private ReentrantLock mutex;
 
 
     public WaitingList(TutorialService tutorialService) {
         // TODO 3: Initialize the waiting list and register it as an observer.
-        throw new RuntimeException("WaitingList::WaitingList: Not implemented yet");
+        this.waitingList = new HashMap<>();
+        tutorialService.addObserver(this);
+        this.mutex = new ReentrantLock();
     }
 
     public void addStudentToWaitingList(String tutorial, Student student) {
         // TODO 3: Add the student to the waiting list of the given tutorial.
-        throw new RuntimeException("WaitingList::addStudentToWaitingList: Not implemented yet");
+        if (waitingList.containsKey(tutorial)){
+            waitingList.get(tutorial).add(student);
+        }
     }
 
     public List<Student> getStudentsInWaitingList(String tutorial) {
         // TODO 3: Return the waiting students for the given tutorial.
-        throw new RuntimeException("WaitingList::getStudentsInWaitingList: Not implemented yet");
+        return waitingList.getOrDefault(tutorial, new ArrayList<>());
     }
-    
+
+    @Override
+    public void update(String tutorialName, int availableSlots) {
+        List<Student> students = getStudentsInWaitingList(tutorialName);
+        if (!students.isEmpty()){
+
+        }
+    }
+
     // TODO 3: React to tutorial slot updates received through the observer interface.
 }
