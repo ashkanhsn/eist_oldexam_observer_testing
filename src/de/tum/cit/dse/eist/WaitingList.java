@@ -29,9 +29,7 @@ public class WaitingList implements TutorialObserver{
 
     public void addStudentToWaitingList(String tutorial, Student student) {
         // TODO 3: Add the student to the waiting list of the given tutorial.
-        if (waitingList.containsKey(tutorial)){
-            waitingList.get(tutorial).add(student);
-        }
+        waitingList.computeIfAbsent(tutorial, t -> new ArrayList<>()).add(student);
     }
 
     public List<Student> getStudentsInWaitingList(String tutorial) {
