@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Observer;
+import java.util.concurrent.locks.ReentrantLock;
 
 // Hint: Do not forget the necessary imports.
 
@@ -16,12 +17,14 @@ public class TutorialService {
     // TODO 1.1: Add the observer-related state according to the UML diagram.
     private HashMap<String, Tutorial> tutorials;
     private List<TutorialObserver> observers;
+    private ReentrantLock mutex;
 
     // TODO 1.2: Add the internal state needed to manage tutorials and optional concurrency.
 
     public TutorialService(){
         this.tutorials = new HashMap<>();
         this.observers = new ArrayList<>();
+        this.mutex = new ReentrantLock();
     }
 
     public void addObserver(TutorialObserver observer) { 
@@ -48,8 +51,11 @@ public class TutorialService {
         if (tutorials.containsKey(name)){
             throw new TutorialAlreadyExistsException("already there!");
         }else{
+            mutex.lock();
             Tutorial newTutorial = new Tutorial(name, availableSlots);
             tutorials.put(name, newTutorial);
+            notifyObservers(name, availableSlots);
+            mutex.unlock();
         }
     }
 
@@ -62,8 +68,10 @@ public class TutorialService {
             if (tutor.getAvailableSlots() <= 0){
                 return false;
             }else{
+                mutex.lock();
                 tutor.signup(student);
                 notifyObservers(tutorialName, tutor.getAvailableSlots());
+                mutex.unlock();
                 return true;
             }
         }
@@ -77,14 +85,17 @@ public class TutorialService {
         }else{
             Tutorial tutorial = tutorials.get(tutorialName);
             if (tutorial.getRegisteredStudents().contains(student)){
+                mutex.lock();
                 tutorial.unregister(student);
                 notifyObservers(tutorialName, tutorial.getAvailableSlots());
+                mutex.unlock();
                 return true;
             }else {
                 return false;
             }
         }
     }
+
 
     public Tutorial getTutorial(String tutorialName) {
         // TODO 1.2: Return the requested tutorial.
@@ -94,4 +105,5 @@ public class TutorialService {
             throw new TutorialNotFoundException("not exist");
         }
     }
+
 }

@@ -18,11 +18,13 @@ public class WaitingList implements TutorialObserver{
     // Optional: Add a synchronization mechanism for the concurrency part.
     private HashMap<String, List<Student>> waitingList;
     private ReentrantLock mutex;
+    private TutorialService tutorialService;
 
 
     public WaitingList(TutorialService tutorialService) {
         // TODO 3: Initialize the waiting list and register it as an observer.
         this.waitingList = new HashMap<>();
+        this.tutorialService = tutorialService;
         tutorialService.addObserver(this);
         this.mutex = new ReentrantLock();
     }
@@ -40,8 +42,15 @@ public class WaitingList implements TutorialObserver{
     @Override
     public void update(String tutorialName, int availableSlots) {
         List<Student> students = getStudentsInWaitingList(tutorialName);
-        if (!students.isEmpty()){
-
+        if (!students.isEmpty()) {
+            for (int i = 0; i < availableSlots; i++) {
+                if (i < waitingList.size()) {
+                    boolean flag = tutorialService.tryRegisterStudent(tutorialName, students.get(i));
+                    if (flag){
+                        students.remove(students.get(i));
+                    }
+                }
+            }
         }
     }
 
