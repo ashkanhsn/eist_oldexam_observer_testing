@@ -48,7 +48,6 @@ class TestTutorialService {
         Student student = new Student("a", "b", "sjkdf");
         tutorialService.addTutorial(newTutorial.name, newTutorial.getAvailableSlots());
         assertTrue(tutorialService.tryRegisterStudent(newTutorial.name, student));
-        assertTrue(newTutorial.getRegisteredStudents().contains(student));
     }
 
     @Test
@@ -70,6 +69,7 @@ class TestTutorialService {
         tutorialService.addTutorial(newTutorial.name, newTutorial.getAvailableSlots());
         assertTrue(tutorialService.tryRegisterStudent(newTutorial.name, student));
         assertTrue(tutorialService.tryUnregisterStudent(newTutorial.name, student));
+        assertTrue(!newTutorial.getRegisteredStudents().contains(student));
     }
 
     @Test
