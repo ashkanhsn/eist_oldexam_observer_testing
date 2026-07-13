@@ -45,7 +45,7 @@ public class WaitingList implements TutorialObserver{
         if (students.isEmpty() || availableSlots <= 0) {
             return;
         } else {
-            Student student = students.getFirst();
+            Student student = students.get(0);
             boolean success = tutorialService.tryRegisterStudent(tutorialName, student);
             if (success){
                 students.remove(student);
