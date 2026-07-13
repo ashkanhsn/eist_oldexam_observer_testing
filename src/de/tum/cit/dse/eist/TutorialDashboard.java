@@ -13,7 +13,9 @@ public class TutorialDashboard implements TutorialObserver{
     // Optional: Add synchronization if you implement the concurrency part.
 
     // TODO 1.3: Update the dashboard state when new slot information is received.
-    
+    public TutorialDashboard(){
+        this.tutorialSlots = new HashMap<>();
+    }
 
     public int getAvailableSlots(String tutorialName) { 
         // TODO 1.3: Look up the requested tutorial in the dashboard state.
