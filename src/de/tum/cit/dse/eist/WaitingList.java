@@ -42,13 +42,17 @@ public class WaitingList implements TutorialObserver{
     @Override
     public void update(String tutorialName, int availableSlots) {
         List<Student> students = getStudentsInWaitingList(tutorialName);
-        if (!students.isEmpty()) {
-            for (int i = 0; i < availableSlots; i++) {
-                if (i < waitingList.size()) {
-                    boolean flag = tutorialService.tryRegisterStudent(tutorialName, students.get(i));
-                    if (flag){
-                        students.remove(students.get(i));
-                    }
+        if (students.isEmpty()){
+            return;
+        }
+        else {
+            List<Student> copy = new ArrayList<>(students);
+            for (Student student: copy) {
+                boolean flag = tutorialService.tryRegisterStudent(tutorialName, student);
+                if (flag){
+                    students.remove(student);
+                } else{
+                    break;
                 }
             }
         }
