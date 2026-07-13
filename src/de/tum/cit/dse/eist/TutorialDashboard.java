@@ -3,6 +3,8 @@ package de.tum.cit.dse.eist;
 // Hint: Add any required imports.
 
 import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class TutorialDashboard implements TutorialObserver{
     // TODO 1.1: Complete the class declaration according to the UML diagram.
@@ -25,7 +27,20 @@ public class TutorialDashboard implements TutorialObserver{
     public String formatDashboard() { 
         // TODO 1.3: Create the formatted dashboard string as described in the task.
         // Hint: hashMap.entrySet().stream().sorted(Map.Entry.comparingByKey()).forEach(entry -> { /* something */})
-        throw new RuntimeException("TutorialDashboard::formatDashboard: Not implemented yet");
+        StringBuilder result = new StringBuilder();
+        result.append("Current Dashboard State:");
+        tutorialSlots.entrySet()
+                .stream()
+                .sorted(Map.Entry.comparingByKey())
+                .forEach(
+                        entry -> {
+                            result.append("\n");
+                            result.append(entry.getKey());
+                            result.append(": ");
+                            result.append(entry.getValue());
+                            result.append(" slots available");
+                        });
+        return result.toString();
     }
 
     @Override
