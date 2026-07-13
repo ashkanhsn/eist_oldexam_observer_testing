@@ -29,8 +29,18 @@ public class TutorialService {
 
     public void addObserver(TutorialObserver observer) { 
         // TODO 1.2: Add the observer and synchronize its initial state.
-        if (!observers.contains(observer)){
-            observers.add(observer);
+        mutex.lock();
+        try {
+            if (!observers.contains(observer)){
+                observers.add(observer);
+            }
+            for (Tutorial tutorial: tutorials.values()){
+                notifyObservers(tutorial.name, tutorial.getAvailableSlots());
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        } finally {
+            mutex.unlock();
         }
     }
 
@@ -69,10 +79,19 @@ public class TutorialService {
                 return false;
             }else{
                 mutex.lock();
-                tutor.signup(student);
-                notifyObservers(tutorialName, tutor.getAvailableSlots());
-                mutex.unlock();
-                return true;
+                try {
+                    boolean success = tutor.signup(student);
+                    if (success){
+                        notifyObservers(tutorialName, tutor.getAvailableSlots());
+                        return true;
+                    }else{
+                        return false;
+                    }
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                } finally {
+                    mutex.unlock();
+                }
             }
         }
 
