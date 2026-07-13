@@ -45,10 +45,20 @@ public class WaitingList implements TutorialObserver{
         if (students.isEmpty() || availableSlots <= 0) {
             return;
         } else {
-            Student student = students.get(0);
-            boolean success = tutorialService.tryRegisterStudent(tutorialName, student);
-            if (success){
-                students.remove(student);
+            List<Student> snapshot = new ArrayList<>(students); // safe to iterate while `waiting` is mutated
+            int slotsLeft = availableSlots;
+
+            for (Student student : snapshot) {
+                if (slotsLeft <= 0) {
+                    break;
+                }
+                boolean registered = tutorialService.tryRegisterStudent(tutorialName, student);
+                if (registered) {
+                    students.remove(student);
+                    slotsLeft--;
+                } else {
+                    break; // tutorialService itself says no room left — trust it over our own count
+                }
             }
         }
     }
